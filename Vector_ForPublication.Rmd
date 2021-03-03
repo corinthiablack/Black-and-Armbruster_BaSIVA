@@ -1,0 +1,814 @@
+---
+title: "Vector_ForPublication"
+author: "Cori"
+date: "3/19/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(dplyr) 
+library(VecStatGraphs2D) # generated vector plots
+library(plotrix)
+library(REdaS)
+library(maps)
+library(rworldmap)
+library(rworldxtra)
+library(rgdal)
+library(tRophicPosition)
+```
+
+###############################
+## BLACK AND ARMBRUSTER 2020 ##
+###############################
+
+###### BaSIVA ###### 
+Download data
+```{r}
+si.data=read.csv('Raw_data.txt', header = T, sep="\t")
+```
+
+Standardize Data
+```{r}
+# Find mean of basal resources
+baseline=subset(si.data, subset = Detailed.Source %in% c("green filamentous algae", "green algae", "algae", "moss", "green algae/periphyton"))
+
+baseline.means=data.frame(baseline$Location, baseline$d15N, baseline$d13C)
+baseline.means=aggregate(baseline.means, list(baseline.means$baseline.Location), mean)
+row.names(baseline.means)=baseline.means$Group.1 #data clean up
+baseline.means$Group.1=NULL #data clean up
+baseline.means$baseline.Location=NULL #data clean up
+
+# Isolate consumers from basal resources and remove NA
+consumers=subset(si.data, FG == "fish") 
+consumers=na.omit(consumers)
+
+# Subtract basal mean from indiviual at each location 
+PER13=subset(consumers, Location == "13")
+PER13$standardized.d15N=PER13$d15N-baseline.means[1,1]
+PER13$standardized.d13C=PER13$d13C-baseline.means[1,2]
+
+PER15=subset(consumers, Location == "15")
+PER15$standardized.d15N=PER15$d15N-baseline.means[2,1]
+PER15$standardized.d13C=PER15$d13C-baseline.means[2,2]
+
+PER17=subset(consumers, Location == "17")
+PER17$standardized.d15N=PER17$d15N-baseline.means[3,1]
+PER17$standardized.d13C=PER17$d13C-baseline.means[3,2]
+
+PER19=subset(consumers, Location == "19")
+PER19$standardized.d15N=PER19$d15N-baseline.means[4,1]
+PER19$standardized.d13C=PER19$d13C-baseline.means[4,2]
+
+# Check that baselines are now set to 0 (sanity check)
+baseline.means[1,1] - baseline.means[1,1]
+baseline.means[1,2] - baseline.means[1,2]
+baseline.means[2,1] - baseline.means[2,1]
+baseline.means[2,2] - baseline.means[2,2]
+baseline.means[3,1] - baseline.means[3,1]
+baseline.means[3,2] - baseline.means[3,2]
+baseline.means[4,1] - baseline.means[4,1]
+baseline.means[4,2] - baseline.means[4,2]
+
+# Combine assemblages together
+consumers.vectors=rbind(PER13,PER15,PER17,PER19)
+
+write.csv(consumers.vectors,file = "baselines.txt")
+```
+
+Vector Analysis
+```{r}
+# Export standardized data to complete vector analysis
+vector.out=consumers.vectors[,10:11]
+write.table(vector.out, file="vectors.txt", sep="\t", col.names = F, row.names = F) ### DO NOT CHANGE THIS FILE BEFORE NEXT STEP! Data must say in order so it can be combine with all data
+```
+
+Azimuth stats
+```{r}
+## Read vectors for all consumers
+vector.in=LoadData("vectors.txt", Type = 2)
+consumers.vectors$Azimuth=vector.in[,2]
+consumers.vectors$Module=vector.in[,1]
+
+# Calculate radians for vector plots
+consumers.vectors$radians=deg2rad(consumers.vectors$Azimuth)
+
+# Remove unknown species from data set
+final.vectors=subset(consumers.vectors, Source != "AUF-10519")
+final.vectors=subset(final.vectors, Source != "AUF-10630")
+final.vectors=subset(final.vectors, Source != "AUSI-10012_AUF-10498 (CHECK)")
+final.means=aggregate(final.vectors, list(final.vectors$Source), mean)
+
+#write.csv(file = "final.vectors.txt",final.vectors)
+
+## Vector stats for all specimens
+AllAzimuthStatistics(final.vectors$Azimuth)
+AllModuleStatistics(final.vectors$Module)
+
+## Vector stats for each species
+Ancistrus=subset(final.vectors,Source == "Ancistrus sp.")
+AllAzimuthStatistics(Ancistrus$Azimuth)
+AllModuleStatistics(Ancistrus$Module)
+
+Astroblepus=subset(final.vectors,Source == "Astroblepus sp.")
+AllAzimuthStatistics(Astroblepus$Azimuth)
+AllModuleStatistics(Astroblepus$Module)
+
+Chaetostoma_brevae=subset(final.vectors,Source == "Chaetostoma breve")
+AllAzimuthStatistics(Chaetostoma_brevae$Azimuth)
+AllModuleStatistics(Chaetostoma_brevae$Module)
+
+Chaetostoma_microps=subset(final.vectors,Source == "Chaetostoma microps")
+AllAzimuthStatistics(Chaetostoma_microps$Azimuth)
+AllModuleStatistics(Chaetostoma_microps$Module)
+
+Cordylancistrus=subset(final.vectors,Source == "Cordylancistrus sp.")
+AllAzimuthStatistics(Cordylancistrus$Azimuth)
+AllModuleStatistics(Cordylancistrus$Module)
+
+Hypostomus_niceforoi=subset(final.vectors,Source == "Hypostomus niceforoi")
+AllAzimuthStatistics(Hypostomus_niceforoi$Azimuth)
+AllModuleStatistics(Hypostomus_niceforoi$Module)
+
+Lamontichthys=subset(final.vectors,Source == "Lamontichthys sp.")
+AllAzimuthStatistics(Lamontichthys$Azimuth)
+AllModuleStatistics(Lamontichthys$Module)
+
+Spatoloricarid=subset(final.vectors,Source == "Spatoloricarid sp.")
+AllAzimuthStatistics(Spatoloricarid$Azimuth)
+AllModuleStatistics(Spatoloricarid$Module)
+```
+
+*FIGURE 2: Standardization Biplot
+```{r}
+# isolate by location
+PER13=subset(final.vectors, Location == "13")
+PER15=subset(final.vectors, Location == "15")
+PER17=subset(final.vectors, Location == "17")
+PER19=subset(final.vectors, Location == "19")
+
+# set color pal
+colblind_pal=c("#000000", "#004949", "#009292", "#ff6db6", "#ffb677", "#490092", "#006ddb", "#b66dff", "#b6dbff", "#920000", "#924900", "#dbd100", "#24ff24", "#ffff6d", "#6db6ff")
+names(colblind_pal)=(c("Ancistrus sp.","Astroblepus sp.","Chaetostoma breve","Chaetostoma microps","Cordylancistrus sp.","Hypostomus niceforoi","Lamontichthys sp.","Spatoloricarid sp."))
+colblind_pal=colblind_pal[match(final.vectors$Source, names(colblind_pal))]
+
+#Generate figure
+pdf(file = "Figure1.1.pdf", width = 6, height = 10)
+par(mfrow=c(2,1))
+#part a.
+plot(PER13$d15N,PER13$d13C,col="#004949", pch=0, ylim = c(-30,13), xlim = c(0,12), xlab = "d15N", ylab = "d13C")
+points(PER13$standardized.d15N,PER13$standardized.d13C, col="#004949", pch=15) #solid square
+points(PER15$d15N, PER15$d13C, col="#ff6db6", pch=0)
+points(PER15$standardized.d15N,PER15$standardized.d13C, col="#ff6db6", pch=15) #solid square
+points(PER17$d15N, PER17$d13C, col="#b66dff", pch=0)
+points(PER17$standardized.d15N,PER17$standardized.d13C, col="#b66dff", pch=15) #solid square
+points(PER19$d15N, PER19$d13C, col="#006ddb", pch=0)
+points(PER19$standardized.d15N,PER19$standardized.d13C, col="#006ddb", pch=15) #solid square
+
+points(0,0, col="black", pch=19, cex=2) 
+points(baseline.means[1,1], baseline.means[1,2], col="#004949", pch=1, cex=2)
+points(baseline.means[2,1], baseline.means[2,2], col="#ff6db6", pch=1, cex=2)
+points(baseline.means[3,1], baseline.means[3,2], col="#b66dff", pch=1, cex=2)
+points(baseline.means[4,1], baseline.means[4,2], col="#006ddb", pch=1, cex=2)
+
+arrows(baseline.means[1,1], baseline.means[1,2], 0, 0, col="#004949", lty=1, lwd=3, length = .1)
+arrows(baseline.means[3,1], baseline.means[3,2], 0, 0, col="#b66dff", lty=1, lwd=3,length = .1)
+arrows(baseline.means[2,1], baseline.means[2,2], 0, 0, col="#ff6db6", lty=1, lwd=3,length = .1)
+arrows(baseline.means[4,1], baseline.means[4,2], 0, 0, col="#006ddb", lty=1, lwd=3,length = .1)
+arrows(mean(PER13$d15N),mean(PER13$d13C),mean(PER13$standardized.d15N),mean(PER13$standardized.d13C), lty=1, col = "#004949", lwd=3,length = .1)
+arrows(mean(PER17$d15N),mean(PER17$d13C),mean(PER17$standardized.d15N),mean(PER17$standardized.d13C),col = "#b66dff", lty=1, lwd=3,length = .1)
+arrows(mean(PER15$d15N),mean(PER15$d13C),mean(PER15$standardized.d15N),mean(PER15$standardized.d13C),col = "#ff6db6", lty=1, lwd=3,length = .1)
+arrows(mean(PER19$d15N),mean(PER19$d13C),mean(PER19$standardized.d15N),mean(PER19$standardized.d13C),col = "#006ddb", lty=1, lwd=3,length = .1)
+
+#part b.
+plot(0,0, col="black", pch=19, cex=2, ylim = c(-10,10), xlim = c(0,10), xlab = "d15N", ylab = "d13C")
+arrows(0,0,final.vectors$standardized.d15N,final.vectors$standardized.d13C, lty=1, col = "black", lwd=1,length = .1)
+points(final.vectors$standardized.d15N, final.vectors$standardized.d13C, col=colblind_pal, pch=15)
+dev.off()
+
+```
+
+```{r}
+#Generate figure
+pdf(file = "Figure1.1.pdf", width = 6, height = 10)
+par(mfrow=c(2,1))
+#part a.
+plot(PER13$d13C,PER13$d15N,col="#004949", pch=0, ylim = c(0,12), xlim = c(-30,13), xlab = "d13C", ylab = "d15N")
+points(PER13$standardized.d13C,PER13$standardized.d15N, col="#004949", pch=15) #solid square
+points(PER15$d13C, PER15$d15N, col="#ff6db6", pch=0)
+points(PER15$standardized.d13C,PER15$standardized.d15N, col="#ff6db6", pch=15) #solid square
+points(PER17$d13C, PER17$d15N, col="#b66dff", pch=0)
+points(PER17$standardized.d13C,PER17$standardized.d15N, col="#b66dff", pch=15) #solid square
+points(PER19$d13C, PER19$d15N, col="#006ddb", pch=0)
+points(PER19$standardized.d13C,PER19$standardized.d15N, col="#006ddb", pch=15) #solid square
+
+points(0,0, col="black", pch=19, cex=2) 
+points(baseline.means[1,2], baseline.means[1,1], col="#004949", pch=1, cex=2)
+points(baseline.means[2,2], baseline.means[2,1], col="#ff6db6", pch=1, cex=2)
+points(baseline.means[3,2], baseline.means[3,1], col="#b66dff", pch=1, cex=2)
+points(baseline.means[4,2], baseline.means[4,1], col="#006ddb", pch=1, cex=2)
+
+arrows(baseline.means[1,2], baseline.means[1,1], 0, 0, col="#004949", lty=1, lwd=3, length = .1)
+arrows(baseline.means[3,2], baseline.means[3,1], 0, 0, col="#b66dff", lty=1, lwd=3,length = .1)
+arrows(baseline.means[2,2], baseline.means[2,1], 0, 0, col="#ff6db6", lty=1, lwd=3,length = .1)
+arrows(baseline.means[4,2], baseline.means[4,1], 0, 0, col="#006ddb", lty=1, lwd=3,length = .1)
+arrows(mean(PER13$d13C),mean(PER13$d15N),mean(PER13$standardized.d13C),mean(PER13$standardized.d15N), lty=1, col = "#004949", lwd=3,length = .1)
+arrows(mean(PER17$d13C),mean(PER17$d15N),mean(PER17$standardized.d13C),mean(PER17$standardized.d15N),col = "#b66dff", lty=1, lwd=3,length = .1)
+arrows(mean(PER15$d13C),mean(PER15$d15N),mean(PER15$standardized.d13C),mean(PER15$standardized.d15N),col = "#ff6db6", lty=1, lwd=3,length = .1)
+arrows(mean(PER19$d13C),mean(PER19$d15N),mean(PER19$standardized.d13C),mean(PER19$standardized.d15N),col = "#006ddb", lty=1, lwd=3,length = .1)
+
+#part b.
+plot(0,0, col="black", pch=19, cex=2, ylim = c(0,10), xlim =c(-10,10) , xlab = "d13C", ylab = "d15N")
+arrows(0,0,final.vectors$standardized.d13C,final.vectors$standardized.d15N, lty=1, col = "black", lwd=1,length = .1)
+points(final.vectors$standardized.d13C, final.vectors$standardized.d15N, col=colblind_pal, pch=15)
+dev.off()
+
+```
+
+*FIGURE 4: Vector plots by species
+```{r}
+#directionlabels <- c("C rich", "N rich", "C poor", "N poor")
+par(cex.axis=0.25)
+par(cex.lab=0.25)
+
+pdf(file = "Figure_species.pdf", width = 20, height = 10)
+par(mfrow=c(2,4))
+radial.plot(c(0, Ancistrus$Module), 
+            c(0, Ancistrus$radians), 
+            lwd=1, line.col="#000000",
+            labels=NULL,
+            radial.lim = c(0,10), #range of grid circle
+            show.grid.label=TRUE, #put the concentric circle labels going down
+            show.radial.grid=TRUE
+)
+radial.plot(c(0, Astroblepus$Module), 
+            c(0, Astroblepus$radians), 
+            lwd=1, line.col="#004949",
+            labels=NULL,
+            radial.lim = c(0,10), #range of grid circle
+            show.grid.label=FALSE, #put the concentric circle labels going down
+            show.radial.grid=FALSE
+)
+radial.plot(c(0, Chaetostoma_brevae$Module), 
+            c(0, Chaetostoma_brevae$radians), 
+            lwd=1, line.col="#009292",
+            labels=NULL,
+            radial.lim = c(0,10), #range of grid circle
+            show.grid.label=FALSE, #put the concentric circle labels going down
+            show.radial.grid=FALSE
+)
+radial.plot(c(0, Chaetostoma_microps$Module), 
+            c(0, Chaetostoma_microps$radians), 
+            lwd=1, line.col="#ff6db6",
+            labels=NULL,
+            radial.lim = c(0,10), #range of grid circle
+            show.grid.label=FALSE, #put the concentric circle labels going down
+            show.radial.grid=FALSE
+)
+radial.plot(c(0, Cordylancistrus$Module), 
+            c(0, Cordylancistrus$radians), 
+            lwd=1, line.col="#ffb677",
+            labels=NULL,
+            radial.lim = c(0,10), #range of grid circle
+            show.grid.label=FALSE, #put the concentric circle labels going down
+            show.radial.grid=FALSE
+)
+radial.plot(c(0, Hypostomus_niceforoi$Module), 
+            c(0, Hypostomus_niceforoi$radians), 
+            lwd=1, line.col="#490092",
+            labels=NULL,
+            radial.lim = c(0,10), #range of grid circle
+            show.grid.label=FALSE, #put the concentric circle labels going down
+            show.radial.grid=FALSE
+)
+radial.plot(c(0, Lamontichthys$Module), 
+            c(0, Lamontichthys$radians), 
+            lwd=1, line.col="#006ddb",
+            labels=NULL,
+            radial.lim = c(0,10), #range of grid circle
+            show.grid.label=FALSE, #put the concentric circle labels going down
+            show.radial.grid=FALSE
+)
+radial.plot(c(0, Spatoloricarid$Module), 
+            c(0, Spatoloricarid$radians), 
+            lwd=1, line.col="#b66dff",
+            labels=NULL,
+            radial.lim = c(0,10), #range of grid circle
+            show.grid.label=FALSE, #put the concentric circle labels going down
+            show.radial.grid=FALSE
+)
+dev.off()
+
+#Plot means of each species
+par(cex.axis=0.25)
+par(cex.lab=0.25)
+
+pdf(file = "Figure_means.pdf", width = 20, height = 10)
+par(mfrow=c(2,4))
+radial.plot(c(0, mean(Ancistrus$Module)), 
+            c(0, mean(Ancistrus$radians)), 
+            lwd=6, line.col="#000000",
+            radial.lim = c(0,10), #range of grid circle
+            show.grid.label=FALSE, #put the concentric circle labels going down
+            show.radial.grid=FALSE
+)
+radial.plot(c(0, mean(Astroblepus$Module)), 
+            c(0, mean(Astroblepus$radians)), 
+            lwd=6, line.col="#004949",
+            radial.lim = c(0,10), #range of grid circle
+            show.grid.label=FALSE, #put the concentric circle labels going down
+            show.radial.grid=FALSE
+)
+radial.plot(c(0, mean(Chaetostoma_brevae$Module)), 
+            c(0, mean(Chaetostoma_brevae$radians)), 
+            lwd=6, line.col="#009292",
+            radial.lim = c(0,10), #range of grid circle
+            show.grid.label=FALSE, #put the concentric circle labels going down
+            show.radial.grid=FALSE
+)
+radial.plot(c(0, mean(Chaetostoma_microps$Module)), 
+            c(0, mean(Chaetostoma_microps$radians)), 
+            lwd=6, line.col="#ff6db6",
+            radial.lim = c(0,10), #range of grid circle
+            show.grid.label=FALSE, #put the concentric circle labels going down
+            show.radial.grid=FALSE
+)
+radial.plot(c(0, mean(Cordylancistrus$Module)), 
+            c(0, mean(Cordylancistrus$radians)), 
+            lwd=6, line.col="#ffb677",
+            radial.lim = c(0,10), #range of grid circle
+            show.grid.label=FALSE, #put the concentric circle labels going down
+            show.radial.grid=FALSE
+)
+radial.plot(c(0, mean(Hypostomus_niceforoi$Module)), 
+            c(0, mean(Hypostomus_niceforoi$radians)), 
+            lwd=6, line.col="#490092",
+            radial.lim = c(0,10), #range of grid circle
+            show.grid.label=FALSE, #put the concentric circle labels going down
+            show.radial.grid=FALSE
+)
+radial.plot(c(0, mean(Lamontichthys$Module)), 
+            c(0, mean(Lamontichthys$radians)), 
+            lwd=6, line.col="#006ddb",
+            radial.lim = c(0,10), #range of grid circle
+            show.grid.label=FALSE, #put the concentric circle labels going down
+            show.radial.grid=FALSE
+)
+radial.plot(c(0, mean(Spatoloricarid$Module)), 
+            c(0, mean(Spatoloricarid$radians)), 
+            lwd=6, line.col="#b66dff",
+            radial.lim = c(0,10), #range of grid circle
+            show.grid.label=FALSE, #put the concentric circle labels going down
+            show.radial.grid=FALSE
+)
+dev.off()
+```
+
+
+##############################
+## LUJAN ET AL. 2012 METHOD ##
+##############################
+
+###### ACSIVA ###### 
+Vector means
+```{r}
+# Find means for entire comsumer community
+vector.means=data.frame(consumers$Location, consumers$d15N, consumers$d13C)
+vector.means=aggregate(vector.means, list(vector.means$consumers.Location), mean)
+row.names(vector.means)=vector.means$Group.1
+vector.means$Group.1=NULL
+vector.means$consumers.Location=NULL
+
+# Find vector of each individual in assemblage
+PER13$ACSIVA.d15N=PER13$d15N-vector.means[1,1]
+PER13$ACSIVA.d13C=PER13$d13C-vector.means[1,2]
+
+PER15$ACSIVA.d15N=PER15$d15N-vector.means[2,1]
+PER15$ACSIVA.d13C=PER15$d13C-vector.means[2,2]
+
+PER17$ACSIVA.d15N=PER17$d15N-vector.means[4,1]
+PER17$ACSIVA.d13C=PER17$d13C-vector.means[4,2]
+
+PER19$ACSIVA.d15N=PER19$d15N-vector.means[5,1]
+PER19$ACSIVA.d13C=PER19$d13C-vector.means[5,2]
+
+# Combine assemblages
+ACSIVA.vectors=rbind(PER13,PER15,PER17,PER19)
+```
+
+Vector Analysis
+```{r}
+# Export standardized data to complete vector analysis
+ACSIVA.vector.out=ACSIVA.vectors[,15:16]
+write.table(ACSIVA.vector.out, file="ACSIVA.vectors.txt", sep="\t", col.names = F, row.names = F) ### DO NOT CHANGE THIS FILE BEFORE NEXT STEP! Data must say in order so it can be combine with all data
+```
+
+Azimuth stats
+```{r}
+## Read vectors for all consumers
+ACSIVA.vector.in=LoadData("ACSIVA.vectors.txt", Type = 2)
+ACSIVA.vectors$Azimuth=ACSIVA.vector.in[,2]
+ACSIVA.vectors$Module=ACSIVA.vector.in[,1]
+
+# Calculate radians for vector plots
+ACSIVA.vectors$radians=deg2rad(ACSIVA.vectors$Azimuth)
+
+# Remove unknown species from data set
+finalACSIVA.vectors=subset(ACSIVA.vectors, Source != "AUF-10519")
+finalACSIVA.vectors=subset(finalACSIVA.vectors, Source != "AUF-10630")
+finalACSIVA.vectors=subset(finalACSIVA.vectors, Source != "AUSI-10012_AUF-10498 (CHECK)")
+finalACSIVA.means=aggregate(finalACSIVA.vectors, list(finalACSIVA.vectors$Source), mean)
+
+## Vector stats for all specimens
+AllAzimuthStatistics(finalACSIVA.vectors$Azimuth)
+AllModuleStatistics(finalACSIVA.vectors$Module)
+
+## Vector stats for each species
+Ancistrus.ACSIVA=subset(finalACSIVA.vectors,Source == "Ancistrus sp.")
+AllAzimuthStatistics(Ancistrus.ACSIVA$Azimuth)
+AllModuleStatistics(Ancistrus.ACSIVA$Module)
+
+Astroblepus.ACSIVA=subset(finalACSIVA.vectors,Source == "Astroblepus sp.")
+AllAzimuthStatistics(Astroblepus.ACSIVA$Azimuth)
+AllModuleStatistics(Astroblepus.ACSIVA$Module)
+
+Chaetostoma_brevae.ACSIVA=subset(finalACSIVA.vectors,Source == "Chaetostoma breve")
+AllAzimuthStatistics(Chaetostoma_brevae.ACSIVA$Azimuth)
+AllModuleStatistics(Chaetostoma_brevae.ACSIVA$Module)
+
+Chaetostoma_microps.ACSIVA=subset(finalACSIVA.vectors,Source == "Chaetostoma microps")
+AllAzimuthStatistics(Chaetostoma_microps.ACSIVA$Azimuth)
+AllModuleStatistics(Chaetostoma_microps.ACSIVA$Module)
+
+Cordylancistrus.ACSIVA=subset(finalACSIVA.vectors,Source == "Cordylancistrus sp.")
+AllAzimuthStatistics(Cordylancistrus.ACSIVA$Azimuth)
+AllModuleStatistics(Cordylancistrus.ACSIVA$Module)
+
+Hypostomus_niceforoi.ACSIVA=subset(finalACSIVA.vectors,Source == "Hypostomus niceforoi")
+AllAzimuthStatistics(Hypostomus_niceforoi.ACSIVA$Azimuth)
+AllModuleStatistics(Hypostomus_niceforoi.ACSIVA$Module)
+
+Lamontichthys.ACSIVA=subset(finalACSIVA.vectors,Source == "Lamontichthys sp.")
+AllAzimuthStatistics(Lamontichthys.ACSIVA$Azimuth)
+AllModuleStatistics(Lamontichthys.ACSIVA$Module)
+
+Spatoloricarid.ACSIVA=subset(finalACSIVA.vectors,Source == "Spatoloricarid sp.")
+AllAzimuthStatistics(Spatoloricarid.ACSIVA$Azimuth)
+AllModuleStatistics(Spatoloricarid.ACSIVA$Module)
+```
+
+*Supplemental Figure 1: Vector plots by species
+```{r}
+par(cex.axis=0.25)
+par(cex.lab=0.25)
+
+pdf(file = "Figure_ACSIVA.pdf", width = 20, height = 10)
+par(mfrow=c(2,4))
+radial.plot(c(0, Ancistrus.ACSIVA$Module), 
+            c(0, Ancistrus.ACSIVA$radians), 
+            lwd=1, line.col="#000000",
+            labels=NULL,
+            radial.lim = c(0,3), #range of grid circle
+            show.grid.label=TRUE, #put the concentric circle labels going down
+            show.radial.grid=TRUE
+)
+radial.plot(c(0, Astroblepus.ACSIVA$Module), 
+            c(0, Astroblepus.ACSIVA$radians), 
+            lwd=1, line.col="#004949",
+            labels=NULL,
+            radial.lim = c(0,3), #range of grid circle
+            show.grid.label=FALSE, #put the concentric circle labels going down
+            show.radial.grid=FALSE
+)
+radial.plot(c(0, Chaetostoma_brevae.ACSIVA$Module), 
+            c(0, Chaetostoma_brevae.ACSIVA$radians), 
+            lwd=1, line.col="#009292",
+            labels=NULL,
+            radial.lim = c(0,3), #range of grid circle
+            show.grid.label=FALSE, #put the concentric circle labels going down
+            show.radial.grid=FALSE
+)
+radial.plot(c(0, Chaetostoma_microps.ACSIVA$Module), 
+            c(0, Chaetostoma_microps.ACSIVA$radians), 
+            lwd=1, line.col="#ff6db6",
+            labels=NULL,
+            radial.lim = c(0,3), #range of grid circle
+            show.grid.label=FALSE, #put the concentric circle labels going down
+            show.radial.grid=FALSE
+)
+radial.plot(c(0, Cordylancistrus.ACSIVA$Module), 
+            c(0, Cordylancistrus.ACSIVA$radians), 
+            lwd=1, line.col="#ffb677",
+            labels=NULL,
+            radial.lim = c(0,3), #range of grid circle
+            show.grid.label=FALSE, #put the concentric circle labels going down
+            show.radial.grid=FALSE
+)
+radial.plot(c(0, Hypostomus_niceforoi.ACSIVA$Module), 
+            c(0, Hypostomus_niceforoi.ACSIVA$radians), 
+            lwd=1, line.col="#490092",
+            labels=NULL,
+            radial.lim = c(0,3), #range of grid circle
+            show.grid.label=FALSE, #put the concentric circle labels going down
+            show.radial.grid=FALSE
+)
+radial.plot(c(0, Lamontichthys.ACSIVA$Module), 
+            c(0, Lamontichthys.ACSIVA$radians), 
+            lwd=1, line.col="#006ddb",
+            labels=NULL,
+            radial.lim = c(0,3), #range of grid circle
+            show.grid.label=FALSE, #put the concentric circle labels going down
+            show.radial.grid=FALSE
+)
+radial.plot(c(0, Spatoloricarid.ACSIVA$Module), 
+            c(0, Spatoloricarid.ACSIVA$radians), 
+            lwd=1, line.col="#b66dff",
+            labels=NULL,
+            radial.lim = c(0,3), #range of grid circle
+            show.grid.label=FALSE, #put the concentric circle labels going down
+            show.radial.grid=FALSE
+)
+dev.off()
+
+#Plot mean of species
+par(cex.axis=0.25)
+par(cex.lab=0.25)
+
+pdf(file = "Figure_ACSIVAmeans.pdf", width = 20, height = 10)
+par(mfrow=c(2,4))
+radial.plot(c(0, mean(Ancistrus.ACSIVA$Module)), 
+            c(0, mean(Ancistrus.ACSIVA$radians)), 
+            lwd=6, line.col="#000000",
+            labels=NULL,
+            radial.lim = c(0,3), #range of grid circle
+            show.grid.label=FALSE, #put the concentric circle labels going down
+            show.radial.grid=TRUE
+)
+radial.plot(c(0, mean(Astroblepus.ACSIVA$Module)), 
+            c(0, mean(Astroblepus.ACSIVA$radians)), 
+            lwd=6, line.col="#004949",
+            labels=NULL,
+            radial.lim = c(0,3), #range of grid circle
+            show.grid.label=FALSE, #put the concentric circle labels going down
+            show.radial.grid=TRUE
+)
+radial.plot(c(0, mean(Chaetostoma_brevae.ACSIVA$Module)), 
+            c(0, mean(Chaetostoma_brevae.ACSIVA$radians)), 
+            lwd=6, line.col="#009292",
+            labels=NULL,
+            radial.lim = c(0,3), #range of grid circle
+            show.grid.label=FALSE, #put the concentric circle labels going down
+            show.radial.grid=TRUE
+)
+radial.plot(c(0, mean(Chaetostoma_microps.ACSIVA$Module)), 
+            c(0, mean(Chaetostoma_microps.ACSIVA$radians)), 
+            lwd=6, line.col="#ff6db6",
+            labels=NULL,
+            radial.lim = c(0,3), #range of grid circle
+            show.grid.label=FALSE, #put the concentric circle labels going down
+            show.radial.grid=TRUE
+)
+radial.plot(c(0, mean(Cordylancistrus.ACSIVA$Module)), 
+            c(0, mean(Cordylancistrus.ACSIVA$radians)), 
+            lwd=6, line.col="#ffb677",
+            labels=NULL,
+            radial.lim = c(0,3), #range of grid circle
+            show.grid.label=FALSE, #put the concentric circle labels going down
+            show.radial.grid=TRUE
+)
+radial.plot(c(0, mean(Hypostomus_niceforoi.ACSIVA$Module)), 
+            c(0, mean(Hypostomus_niceforoi.ACSIVA$radians)), 
+            lwd=6, line.col="#490092",
+            labels=NULL,
+            radial.lim = c(0,3), #range of grid circle
+            show.grid.label=FALSE, #put the concentric circle labels going down
+            show.radial.grid=TRUE
+)
+radial.plot(c(0, mean(Lamontichthys.ACSIVA$Module)), 
+            c(0, mean(Lamontichthys.ACSIVA$radians)), 
+            lwd=6, line.col="#006ddb",
+            labels=NULL,
+            radial.lim = c(0,3), #range of grid circle
+            show.grid.label=FALSE, #put the concentric circle labels going down
+            show.radial.grid=TRUE
+)
+radial.plot(c(0, mean(Spatoloricarid.ACSIVA$Module)), 
+            c(0, mean(Spatoloricarid.ACSIVA$radians)), 
+            lwd=6, line.col="#b66dff",
+            labels=NULL,
+            radial.lim = c(0,3), #range of grid circle
+            show.grid.label=FALSE, #put the concentric circle labels going down
+            show.radial.grid=TRUE
+)
+dev.off()
+```
+
+*FIGURE 3: BaSIVA vs ACSIVA
+```{r}
+directionlabels=c("0", "90", "180", "270")
+
+pdf(file = "BaSIVA.pdf", width = 4, height = 4)
+            radial.plot(c(0, mean(Ancistrus$Module)), 
+                        c(0, mean(Ancistrus$radians)), 
+                        lwd=6, line.col="#000000", labels=directionlabels, radial.lim = c(0,10), show.grid.label=FALSE, show.radial.grid=TRUE)
+                        
+            par(fig=c(0,1,0,1), new=TRUE)
+            radial.plot(c(0, mean(Astroblepus$Module)), 
+                        c(0, mean(Astroblepus$radians)), 
+                        lwd=6, line.col="#004949", labels=NULL, radial.lim = c(0,10), show.grid.label=FALSE, show.radial.grid=FALSE, show.grid = FALSE)
+                        
+            par(fig=c(0,1,0,1), new=TRUE)
+            radial.plot(c(0, mean(Chaetostoma_brevae$Module)), 
+                        c(0, mean(Chaetostoma_brevae$radians)), 
+                        lwd=6, line.col="#009292", labels=NULL, radial.lim = c(0,10), show.grid.label=FALSE, show.radial.grid=FALSE, show.grid = FALSE)
+                        
+            par(fig=c(0,1,0,1), new=TRUE)
+            radial.plot(c(0, mean(Chaetostoma_microps$Module)), 
+                        c(0, mean(Chaetostoma_microps$radians)), 
+                        lwd=6, line.col="#ff6db6", labels=NULL, radial.lim = c(0,10), show.grid.label=FALSE, show.radial.grid=FALSE, show.grid = FALSE)
+                        
+            par(fig=c(0,1,0,1), new=TRUE)
+            radial.plot(c(0, mean(Cordylancistrus$Module)), 
+                        c(0, mean(Cordylancistrus$radians)), 
+                        lwd=6, line.col="#ffb677", labels=NULL, radial.lim = c(0,10), show.grid.label=FALSE, show.radial.grid=FALSE, show.grid = FALSE)
+                        
+            par(fig=c(0,1,0,1), new=TRUE)
+            radial.plot(c(0, mean(Hypostomus_niceforoi$Module)), 
+                        c(0, mean(Hypostomus_niceforoi$radians)), 
+                        lwd=6, line.col="#490092", labels=NULL, radial.lim = c(0,10), show.grid.label=FALSE, show.radial.grid=FALSE, show.grid = FALSE)
+                        
+            par(fig=c(0,1,0,1), new=TRUE)
+            radial.plot(c(0, mean(Lamontichthys$Module)), 
+                        c(0, mean(Lamontichthys$radians)), 
+                        lwd=6, line.col="#006ddb", labels=NULL, radial.lim = c(0,10), show.grid.label=FALSE, show.radial.grid=FALSE, show.grid = FALSE)
+                        
+            par(fig=c(0,1,0,1), new=TRUE)
+            radial.plot(c(0, mean(Spatoloricarid$Module)), 
+                        c(0, mean(Spatoloricarid$radians)), 
+                        lwd=6, line.col="#b66dff", labels=NULL, radial.lim = c(0,10), show.grid.label=FALSE, show.radial.grid=FALSE, show.grid = FALSE)
+dev.off()
+
+pdf(file = "ACSIVA.pdf", width = 4, height = 4)
+            par(fig=c(0,1,0,1), new=TRUE)
+            radial.plot(c(0, mean(Ancistrus.ACSIVA$Module)), 
+                        c(0, mean(Ancistrus.ACSIVA$radians)), 
+                        lwd=6, line.col="#000000", labels=directionlabels, radial.lim = c(0,10), show.grid.label=FALSE, show.radial.grid=TRUE)
+                  
+            par(fig=c(0,1,0,1), new=TRUE)
+            radial.plot(c(0, mean(Astroblepus.ACSIVA$Module)), 
+                        c(0, mean(Astroblepus.ACSIVA$radians)), 
+                        lwd=6, line.col="#004949", labels=NULL, radial.lim = c(0,10), show.grid.label=FALSE, show.radial.grid=FALSE, show.grid = FALSE)
+                  
+            par(fig=c(0,1,0,1), new=TRUE)
+            radial.plot(c(0, mean(Chaetostoma_brevae.ACSIVA$Module)), 
+                        c(0, mean(Chaetostoma_brevae.ACSIVA$radians)), 
+                        lwd=6, line.col="#009292", labels=NULL, radial.lim = c(0,10), show.grid.label=FALSE, show.radial.grid=FALSE, show.grid = FALSE)
+                  
+            par(fig=c(0,1,0,1), new=TRUE)
+            radial.plot(c(0, mean(Chaetostoma_microps.ACSIVA$Module)), 
+                        c(0, mean(Chaetostoma_microps.ACSIVA$radians)), 
+                        lwd=6, line.col="#ff6db6", labels=NULL, radial.lim = c(0,10), show.grid.label=FALSE, show.radial.grid=FALSE, show.grid = FALSE)
+                  
+            par(fig=c(0,1,0,1), new=TRUE)
+            radial.plot(c(0, mean(Cordylancistrus.ACSIVA$Module)), 
+                        c(0, mean(Cordylancistrus.ACSIVA$radians)), 
+                        lwd=6, line.col="#ffb677", labels=NULL, radial.lim = c(0,10), show.grid.label=FALSE, show.radial.grid=FALSE, show.grid = FALSE)
+                  
+            par(fig=c(0,1,0,1), new=TRUE)
+            radial.plot(c(0, mean(Hypostomus_niceforoi.ACSIVA$Module)), 
+                        c(0, mean(Hypostomus_niceforoi.ACSIVA$radians)), 
+                        lwd=6, line.col="#490092", labels=NULL, radial.lim = c(0,10), show.grid.label=FALSE, show.radial.grid=FALSE, show.grid = FALSE)
+                  
+            par(fig=c(0,1,0,1), new=TRUE)
+            radial.plot(c(0, mean(Lamontichthys.ACSIVA$Module)), 
+                        c(0, mean(Lamontichthys.ACSIVA$radians)), 
+                        lwd=6, line.col="#006ddb", labels=NULL, radial.lim = c(0,10), show.grid.label=FALSE, show.radial.grid=FALSE, show.grid = FALSE)
+                  
+            par(fig=c(0,1,0,1), new=TRUE)
+            radial.plot(c(0, mean(Spatoloricarid.ACSIVA$Module)), 
+                        c(0, mean(Spatoloricarid.ACSIVA$radians)), 
+                        lwd=6, line.col="#b66dff", labels=NULL, radial.lim = c(0,10), show.grid.label=FALSE, show.radial.grid=FALSE, show.grid = FALSE)
+dev.off()
+
+pdf(file = "ACSIVAclose.pdf", width = 4, height = 4)
+            par(fig=c(0,1,0,1), new=TRUE)
+            radial.plot(c(0, mean(Ancistrus.ACSIVA$Module)), 
+                        c(0, mean(Ancistrus.ACSIVA$radians)), 
+                        lwd=6, line.col="#000000", labels=directionlabels, radial.lim = c(0,3), show.grid.label=FALSE, show.radial.grid=TRUE)
+                  
+            par(fig=c(0,1,0,1), new=TRUE)
+            radial.plot(c(0, mean(Astroblepus.ACSIVA$Module)), 
+                        c(0, mean(Astroblepus.ACSIVA$radians)), 
+                        lwd=6, line.col="#004949", labels=NULL, radial.lim = c(0,3), show.grid.label=FALSE, show.radial.grid=FALSE, show.grid = FALSE)
+                  
+            par(fig=c(0,1,0,1), new=TRUE)
+            radial.plot(c(0, mean(Chaetostoma_brevae.ACSIVA$Module)), 
+                        c(0, mean(Chaetostoma_brevae.ACSIVA$radians)), 
+                        lwd=6, line.col="#009292", labels=NULL, radial.lim = c(0,3), show.grid.label=FALSE, show.radial.grid=FALSE, show.grid = FALSE)
+                  
+            par(fig=c(0,1,0,1), new=TRUE)
+            radial.plot(c(0, mean(Chaetostoma_microps.ACSIVA$Module)), 
+                        c(0, mean(Chaetostoma_microps.ACSIVA$radians)), 
+                        lwd=6, line.col="#ff6db6", labels=NULL, radial.lim = c(0,3), show.grid.label=FALSE, show.radial.grid=FALSE, show.grid = FALSE)
+                  
+            par(fig=c(0,1,0,1), new=TRUE)
+            radial.plot(c(0, mean(Cordylancistrus.ACSIVA$Module)), 
+                        c(0, mean(Cordylancistrus.ACSIVA$radians)), 
+                        lwd=6, line.col="#ffb677", labels=NULL, radial.lim = c(0,3), show.grid.label=FALSE, show.radial.grid=FALSE, show.grid = FALSE)
+                  
+            par(fig=c(0,1,0,1), new=TRUE)
+            radial.plot(c(0, mean(Hypostomus_niceforoi.ACSIVA$Module)), 
+                        c(0, mean(Hypostomus_niceforoi.ACSIVA$radians)), 
+                        lwd=6, line.col="#490092", labels=NULL, radial.lim = c(0,3), show.grid.label=FALSE, show.radial.grid=FALSE, show.grid = FALSE)
+                  
+            par(fig=c(0,1,0,1), new=TRUE)
+            radial.plot(c(0, mean(Lamontichthys.ACSIVA$Module)), 
+                        c(0, mean(Lamontichthys.ACSIVA$radians)), 
+                        lwd=6, line.col="#006ddb", labels=NULL, radial.lim = c(0,3), show.grid.label=FALSE, show.radial.grid=FALSE, show.grid = FALSE)
+                  
+            par(fig=c(0,1,0,1), new=TRUE)
+            radial.plot(c(0, mean(Spatoloricarid.ACSIVA$Module)), 
+                        c(0, mean(Spatoloricarid.ACSIVA$radians)), 
+                        lwd=6, line.col="#b66dff", labels=NULL, radial.lim = c(0,3), show.grid.label=FALSE, show.radial.grid=FALSE, show.grid = FALSE)
+dev.off()
+
+spec.legend=unique(colblind_pal)
+
+pdf(file = "legend.pdf",width = 4, height = 4)
+plot.new()
+legend(x="topleft",c("Ancistrus","Astroblepus","Chaetostoma brevae","Chaetostoma microps","Cordylancistrus","Hypostomus niceforoi","Lamontichthys","Spatoloricarid"), col = c("#000000","#004949","#009292","#ff6db6","#ffb677","#490092","#006ddb","#b66dff"), pch = 19)
+dev.off()
+```
+
+
+Traditional trophic postions in tRophicPosition package
+```{r}
+si.data=read.csv('Raw_data.txt', header = T, sep = "\t")
+si.data=subset(si.data, Source != "AUF-10519")
+si.data=subset(si.data, Source != "AUF-10630")
+si.data=subset(si.data, Source != "AUSI-10012_AUF-10498 (CHECK)")
+
+si.data=si.data %>% mutate(Community = paste(Study,Location,"-",Source, sep = ""))
+
+si.2BL=subset(si.data, Location != "15")
+si.list <- extractIsotopeData(si.2BL, b1 = "plant_BL", b2 = "animal_BL", baselineColumn = "FG", consumersColumn = "Source", groupsColumn = "Location", d13C = "d13C", d15N = "d15N")
+
+si.models=multiSpeciesTP(si.list, model = "twoBaselines")
+
+sapply(si.models$"TPs", quantile, probs = c(0.025, 0.5, 0.975)) %>% round(3)
+
+getPosteriorMode(si.models$"TPs")
+
+pairwiseTP=pairwiseComparisons(si.models$TPs, print = TRUE)
+pairwiseAlpha=pairwiseComparisons(si.models$Alphas, print = TRUE)
+```
+
+*Supplemental Figures 2-6: Vector plots by species
+```{r}
+pdf(file = "plots.pdf")
+par(mfrow=c(4,5))
+for (community in si.list) {plot(community)}
+dev.off()
+
+pdf(file = "trophicposition.pdf", width=10, height=6)
+credibilityIntervals(si.models$df, x = "consumer", xlab ="Source", y1 = "median", y2 = "alpha.median")
+dev.off()
+```
+
+Statisical analysis to determin if standardization significanly changed data: Yes
+```{r}
+d15stand=lm(final.vectors$d15N~final.vectors$standardized.d15N)
+d13stand=lm(final.vectors$d13C~final.vectors$standardized.d13C)
+
+summary(d15stand)
+confint(d15stand)
+summary(d13stand)
+confint(d13stand)
+```
+
+## Map of localities
+```{r}
+locations=read.csv(file = "Map/LatLong.csv")
+map=getMap(resolution = "high")
+riversgeneral=readOGR("Map/Hydro/")
+riversdetailed=readOGR("Map/hidro/")
+
+pdf("EmbededMap.pdf", width = 6, height = 8)
+par(fig = c(0,1,0,1))
+plot(map, xlim = c(-83, -70), ylim = c(-18, 0),
+     asp = 1, lwd=1,
+     bg="lightblue", col="#ffffff")
+plot(riversgeneral, col="lightblue", add=T, lwd=3)
+map.axes()
+points(x=locations$Long, y=locations$Lat, pch= 19, col="black", cex=1.5)
+
+par(fig = c(0.08,.75, 0.06, .63), new = T)  
+plot(map, xlim = c(-79.5, -78), ylim = c(-6, -5),
+     asp = 1, lwd=1,
+     bg="lightblue", col="#ffffff")
+plot(riversdetailed, col="lightblue", add=T, lwd=2)
+map.axes()
+points(x=locations$Long, y=locations$Lat, pch= 19, col="black", cex=2)
+dev.off()
+```

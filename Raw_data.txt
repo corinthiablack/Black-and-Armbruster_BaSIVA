@@ -1,0 +1,116 @@
+Study	Location	Tissue	Source	Detailed.Source	FG_1	FG	d15N	d13C
+PER18	13	NA	detritus	leaf detritus	BL	plant_BL	0	-30.69
+PER18	13	NA	wood	wood	BL	plant_BL	1.06	-29.34
+PER18	13	NA	moss	moss	BL	plant_BL	2.32	-24.31
+PER18	13	NA	algae	green algae/periphyton	BL	plant_BL	1.05	-17.17
+PER18	15	NA	algae	green algae/periphyton	BL	plant_BL	5.12	-16.52
+PER18	15	NA	algae	green algae/periphyton	BL	plant_BL	5.1	-14.65
+PER18	15	NA	algae	green algae/periphyton	BL	plant_BL	5.7	-18.39
+PER18	15	NA	algae	green algae/periphyton	BL	plant_BL	2.94	-28.58
+PER18	15	NA	grass	grass leaf	BL	plant_BL	2.51	-27.72
+PER18	15	NA	grass	grass leaf	BL	plant_BL	2.14	-25.88
+PER18	15	NA	grass	grass stem	BL	plant_BL	2.44	-26.38
+PER18	16	NA	grass	grass	BL	plant_BL	6.46	-28.32
+PER18	16	NA	grass	grass	BL	plant_BL	2.91	-28.89
+PER18	16	NA	wood	wood	BL	plant_BL	6.34	-30.74
+PER18	17	NA	detritus	grass detritus	BL	plant_BL	1.16	-28.57
+PER18	17	NA	grass	grass	BL	plant_BL	-1	-26.76
+PER18	17	NA	grass	grass	BL	plant_BL	3.96	-29.45
+PER18	17	NA	detritus	leaf detritus	BL	plant_BL	1.48	-32.27
+PER18	17	NA	wood	large log	BL	plant_BL	6.28	-27.49
+PER18	17	NA	wood	small stick	BL	plant_BL	-0.09	-30.29
+PER18	17	NA	moss	moss	BL	plant_BL	3.85	-28.55
+PER18	17	NA	algae	green algae/periphyton	BL	plant_BL	4.75	-0.55
+PER18	17	NA	seed	seed pod	BL	plant_BL	-0.4	-28.71
+PER18	17	NA	grass	small plant	BL	plant_BL	1.81	-25.04
+PER18	17	NA	grass	green leaf	BL	plant_BL	-0.39	-28.42
+PER18	17	NA	detritus	grass detritus	BL	plant_BL	1.56	-29.44
+PER18	17	NA	grass	grass stem	BL	plant_BL	4.18	-27.97
+PER18	19	NA	algae	green algae/periphyton	BL	plant_BL	1.75	-27.96
+PER18	19	NA	algae	green algae/periphyton	BL	plant_BL	5.18	-21.13
+PER18	19	NA	grass	grass stem	BL	plant_BL	5.95	-12.39
+PER18	19	NA	wood	small stick	BL	plant_BL	2.84	-30.95
+PER18	19	NA	leaf	leaf	BL	plant_BL	1.14	-34.65
+PER18	19	NA	detritus	grass detritus	BL	plant_BL	1.85	-27.86
+PER18	19	NA	moss	green moss	BL	plant_BL	-4.02	-27.17
+PER18	19	NA	grass	grass	BL	plant_BL	5.55	-14.31
+PER18	19	NA	wood	large log	BL	plant_BL	-1.05	-28.35
+PER18	19	NA	detritus	leaf detritus	BL	plant_BL	0.84	-29.9
+PER18	19	NA	leaf	leaf	BL	plant_BL	2.77	-19.95
+PER18	13	NA	insect	bug	BL	animal_BL	5.45	-16.32
+PER18	16	NA	insect	dragonfly larvae	BL	animal_BL	6.63	-23.4
+PER18	16	NA	insect	dragonfly larvae	BL	animal_BL	7.42	-23.22
+PER18	17	NA	mollusk	snail	BL	animal_BL	5.83	-13.88
+PER18	17	NA	insect	mayfly larvae	BL	animal_BL	6.27	-22.65
+PER18	17	NA	crustacean	shrimp	BL	animal_BL	3.43	-18.57
+PER18	19	NA	mollusk	snail	BL	animal_BL	6.35	-16.84
+PER18	19	NA	insect	dragonfly larvae	BL	animal_BL	3.94	-25.23
+PER18	19	NA	mollusk	corbicula	BL	animal_BL	6.59	-11.39
+PER18	13	AUF10500	Chaetostoma microps	Chaetostoma microps	fish	fish	7.02	-16.05
+PER18	13	AUF10498	Astroblepus sp.	Astroblepus sp.	fish	fish	NA	NA
+PER18	13	AUF10497	Chaetostoma microps	Chaetostoma microps	fish	fish	6.85	-17.56
+PER18	13	AUF10498	AUSI-10012_AUF-10498 (CHECK)	AUSI-10012_AUF-10498 (CHECK)	fish	fish	6.42	-16.94
+PER18	13	AUF10496	Astroblepus sp.	Astroblepus sp.	fish	fish	8.04	-16.96
+PER18	13	AUF10493	Chaetostoma microps	Chaetostoma microps	fish	fish	6.45	-17.87
+PER18	13	AUF10495	Astroblepus sp.	Astroblepus sp.	fish	fish	9.05	-16.49
+PER18	13	AUF10494	Astroblepus sp.	Astroblepus sp.	fish	fish	7.56	-17.67
+PER18	13	AUF10501	Chaetostoma microps	Chaetostoma microps	fish	fish	7.59	-17.75
+PER18	15	AUF10509	Spatoloricarid sp.	Spatoloricarid sp.	fish	fish	8.87	-22.72
+PER18	15	AUF10518	Ancistrus sp.	Ancistrus sp.	fish	fish	9.99	-24.93
+PER18	15	AUF10519	AUF-10519	AUF-10519	fish	fish	9.02	-24.13
+PER18	15	AUF10520	Chaetostoma breve	Chaetostoma breve	fish	fish	8.82	-24.73
+PER18	15	AUF10522	Chaetostoma breve	Chaetostoma breve	fish	fish	8.14	-25.12
+PER18	15	AUF10523	Chaetostoma breve	Chaetostoma breve	fish	fish	8.55	-24.79
+PER18	15	AUF10524	Chaetostoma breve	Chaetostoma breve	fish	fish	8.13	-25.1
+PER18	15	AUF10525	Lamontichthys sp.	Lamontichthys sp.	fish	fish	7.93	-22.81
+PER18	15	AUF10526	Lamontichthys sp.	Lamontichthys sp.	fish	fish	8.45	-24.06
+PER18	15	AUF10527	Lamontichthys sp.	Lamontichthys sp.	fish	fish	8.42	-24.04
+PER18	16	AUF10537	Spatoloricarid sp.	Spatoloricarid sp.	fish	fish	10.54	-24.09
+PER18	16	AUF10535	Spatoloricarid sp.	Spatoloricarid sp.	fish	fish	9.99	-23.58
+PER18	16	AUF10540	Spatoloricarid sp.	Spatoloricarid sp.	fish	fish	10.61	-25.24
+PER18	16	AUF10538	Spatoloricarid sp.	Spatoloricarid sp.	fish	fish	7.59	-26.39
+PER18	16	AUF10545	Hypostomus niceforoi	Hypostomus niceforoi	fish	fish	8.93	-22.4
+PER18	16	AUF10546	Lasiancistrus schomburgkii	Lasiancistrus schomburgkii	fish	fish	9.51	-25.11
+PER18	16	AUF10547	Lasiancistrus schomburgkii	Lasiancistrus schomburgkii	fish	fish	9.8	-25.04
+PER18	16	AUF10548	Lasiancistrus schomburgkii	Lasiancistrus schomburgkii	fish	fish	9.75	-25.01
+PER18	16	AUF10552	Chaetostoma trimaculineum	Chaetostoma trimaculineum	fish	fish	10.27	-24.97
+PER18	16	AUF10553	Chaetostoma trimaculineum	Chaetostoma trimaculineum	fish	fish	9.64	-25.39
+PER18	16	AUF10554	Chaetostoma trimaculineum	Chaetostoma trimaculineum	fish	fish	9.91	-26.82
+PER18	16	AUF10539	Spatoloricarid sp.	Spatoloricarid sp.	fish	fish	10.76	-24.99
+PER18	16	AUF10541	Hypostomus niceforoi	Hypostomus niceforoi	fish	fish	9.47	-21.7
+PER18	16	AUF10542	Hypostomus niceforoi	Hypostomus niceforoi	fish	fish	9.24	-25.11
+PER18	16	AUF10543	Hypostomus niceforoi	Hypostomus niceforoi	fish	fish	8.99	-24.06
+PER18	16	AUF10544	Hypostomus niceforoi	Hypostomus niceforoi	fish	fish	9.07	-21.77
+PER18	16	AUF10550	Hypostomus pyrineusi	Hypostomus pyrineusi	fish	fish	8.94	-23.97
+PER18	16	AUF10551	Chaetostoma trimaculineum	Chaetostoma trimaculineum	fish	fish	9.95	-26.67
+PER18	16	AUF10555	Chaetostoma trimaculineum	Chaetostoma trimaculineum	fish	fish	10.01	-26.78
+PER18	16	AUF10563	Chaetostoma breve	Chaetostoma breve	fish	fish	10.33	-26.06
+PER18	16	AUF10564	Chaetostoma breve	Chaetostoma breve	fish	fish	9.95	-27.44
+PER18	16	AUF10565	Chaetostoma breve	Chaetostoma breve	fish	fish	9.83	-27.17
+PER18	17	AUF10577	Cordylancistrus sp.	Cordylancistrus sp.	fish	fish	8.77	-22.48
+PER18	17	AUF10578	Cordylancistrus sp.	Cordylancistrus sp.	fish	fish	8.59	-22.85
+PER18	17	AUF10579	Cordylancistrus sp.	Cordylancistrus sp.	fish	fish	8.8	-22.24
+PER18	17	AUF10570	Chaetostoma breve	Chaetostoma breve	fish	fish	8.83	-20.28
+PER18	17	AUF10572	Chaetostoma breve	Chaetostoma breve	fish	fish	8.3	-21.42
+PER18	17	AUF10568	Chaetostoma breve	Chaetostoma breve	fish	fish	9.33	-23.06
+PER18	17	AUF10569	Chaetostoma breve	Chaetostoma breve	fish	fish	8.66	-21.88
+PER18	17	AUF10571	Chaetostoma breve	Chaetostoma breve	fish	fish	8.88	-22.58
+PER18	19	AUF10604	Chaetostoma breve	Chaetostoma breve	fish	fish	9.25	-24.69
+PER18	19	AUF10605	Chaetostoma breve	Chaetostoma breve	fish	fish	10.27	-25.09
+PER18	19	AUF10606	Chaetostoma breve	Chaetostoma breve	fish	fish	9.81	-25.51
+PER18	19	AUF10607	Chaetostoma breve	Chaetostoma breve	fish	fish	9.79	-24.35
+PER18	19	AUF10609	Chaetostoma microps	Chaetostoma microps	fish	fish	9.54	-22.52
+PER18	19	AUF10610	Chaetostoma microps	Chaetostoma microps	fish	fish	9.26	-22.49
+PER18	19	AUF10611	Chaetostoma microps	Chaetostoma microps	fish	fish	9.18	-25.9
+PER18	19	AUF10612	Chaetostoma microps	Chaetostoma microps	fish	fish	9.6	-22.19
+PER18	19	AUF10614	Ancistrus sp.	Ancistrus sp.	fish	fish	9.17	-23.76
+PER18	19	AUF10615	Ancistrus sp.	Ancistrus sp.	fish	fish	9.25	-23.86
+PER18	19	AUF10618	Ancistrus sp.	Ancistrus sp.	fish	fish	9.4	-23.79
+PER18	19	AUF10620	Spatoloricarid sp.	Spatoloricarid sp.	fish	fish	9.96	-22.15
+PER18	19	AUF10621	Spatoloricarid sp.	Spatoloricarid sp.	fish	fish	10.17	-23
+PER18	19	AUF10623	Spatoloricarid sp.	Spatoloricarid sp.	fish	fish	10.13	-21.35
+PER18	19	AUF10625	Hypostomus niceforoi	Hypostomus niceforoi	fish	fish	9.69	-20.77
+PER18	19	AUF10627	Hypostomus niceforoi	Hypostomus niceforoi	fish	fish	9.81	-22.08
+PER18	19	AUF10628	Hypostomus niceforoi	Hypostomus niceforoi	fish	fish	9.42	-21.06
+PER18	19	AUF10629	Hypostomus niceforoi	Hypostomus niceforoi	fish	fish	10.25	-20.42
+PER18	19	AUF10630	AUF-10630	AUF-10630	fish	fish	10.69	-22.76
